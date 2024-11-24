@@ -32,12 +32,19 @@ const Index = () => {
       <View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/home")} // Correct navigation
+          onPress={() => router.push("/home")} 
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Don't have an account?</Text>
+        <TouchableOpacity onPress={() => router.push("/register")}>
+          <Text style={styles.signupText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
     </View>
+    
   );
 };
 
@@ -58,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: -100,
   },
   card: {
-    width: "60%",
+    width: "70%",
     backgroundColor: "#505050",
     borderRadius: 40,
     padding: 20,
@@ -69,26 +76,44 @@ const styles = StyleSheet.create({
     elevation: 5,
     justifyContent: "center",
     alignItems: "center",
-    margin: 15,
+    margin: 10,
   },
   textInput: {
     width: "100%",
-    height: 50,
+    height: 40, 
     color: "#fff",
-    fontSize: 20,
-    textAlign: "center",
+    fontSize: 23, 
+    textAlign: "left",
+    paddingLeft: 10,
   },
   button: {
     backgroundColor: "#7700FF",
-    borderRadius: 8,
+    borderRadius: 30,
     padding: 20,
-    paddingHorizontal: 50,
+    paddingHorizontal: 40,
     alignItems: "center",
-    marginVertical: 20,
+    marginVertical: 17,
+    paddingVertical: 10,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
   },
+  footerText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    alignItems: "flex-start",
+  },
+  signupText: {
+    color: "#7700FF",
+    fontSize: 20,
+    marginTop: 10,
+  }
 });
