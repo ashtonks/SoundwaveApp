@@ -7,7 +7,7 @@ import {
   FlatList,
   Modal,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Library = () => {
   const [playlists, setPlaylists] = useState([]); // To store playlists
@@ -17,6 +17,8 @@ const Library = () => {
   const [modalVisible, setModalVisible] = useState(false); // For adding songs to playlist
   const [deleteModalVisible, setDeleteModalVisible] = useState(false); // For deleting playlist confirmation
   const [playlistToDelete, setPlaylistToDelete] = useState(null); // To store playlist to be deleted
+
+
 
   // Add a new playlist
   const handleAddPlaylist = () => {
@@ -78,6 +80,10 @@ const Library = () => {
       </TouchableOpacity>
     </View>
   );
+
+  // useEffect(() => {
+  //   requestToken();
+  // }, [])
 
   return (
     <View style={styles.container}>

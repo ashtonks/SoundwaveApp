@@ -8,6 +8,8 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import * as AuthSession from 'expo-auth-session';
+
 
 const Index = () => {
   const [username, setUsername] = useState("");
