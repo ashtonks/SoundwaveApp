@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,20 +9,87 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import * as AuthSession from 'expo-auth-session';
+// import {requestToken, api} from "./spotifyApi";
+import axios from "axios";
+
 
 
 const Index = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [requestToken, setRequestToken] = useState(false);
+  const [token, setToken] = useState('');
+  const [api, setApi] = useState(null);
+  // const [disableLogin, setDisableLogin] = useState(true);
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [isFirstRender, setIsFirstRender] = useState(true);
   const router = useRouter();
 
-  const handleLogin = () => {
+  const discovery = {
+    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+    tokenEndpoint: 'https://accounts.spotify.com/api/token',
+  };
+
+  const clientPub = process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_ID;
+
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: clientPub,
+      scopes: ['user-read-email', 'playlist-modify-public'],
+      // To follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
+      // this must be set to false
+      usePKCE: false,
+      redirectUri: AuthSession.makeRedirectUri({
+        scheme: 'myapp',
+      }),
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params;
+    }
+  }, [response]);
+
+  const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert("Error", "Please fill in both fields");
       return;
     }
+    
     router.push({ pathname: "/home", params: { username } });
   };
+
+  //GetToken
+
+  // useEffect(()=>{
+  //   try{
+  //     axios({
+  //         method: 'post',
+  //         url: "https://accounts.spotify.com/api/token",
+  //         headers: 'Content-Type: application/x-www-form-urlencoded',
+  //         data: {
+  //             grant_type: 'client_credentials',
+  //             client_id: `${process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_ID}`,
+  //             client_secret: `${process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_SECRET}`,
+  //         }
+  //     }).then((data)=>(setToken(data.data.access_token),console.log(data)));
+  //   }catch (e) {throw (e);}
+  // }, [requestToken]);
+
+
+  //Setup API
+  //Not workin'
+
+  // useEffect(()=> {
+  //   setApi(axios.create({
+  //     baseURL: process.env.EXPO_PUBLIC_SPOTIFY_BASE_URL,
+  //     headers: {
+  //       Authorization: `Bearer ${token}`
+  //     },
+  //   }));
+  // },[token])
 
   return (
     <View style={styles.container}>
@@ -47,8 +114,14 @@ const Index = () => {
         />
       </View>
       <View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={() => (promptAsync())}>
           <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() =>(console.log(token))}>
+          <Text style={styles.buttonText}>Get Token</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() =>(console.log(api))}>
+          <Text style={styles.buttonText}>Get Api</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
