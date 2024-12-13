@@ -11,18 +11,19 @@ import { useRouter } from "expo-router";
 import * as AuthSession from 'expo-auth-session';
 // import {requestToken, api} from "./spotifyApi";
 import axios from "axios";
+import * as WebBrowser from 'expo-web-browser';
 
-
+WebBrowser.maybeCompleteAuthSession();
 
 const Index = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [requestToken, setRequestToken] = useState(false);
+  // const [requestToken, setRequestToken] = useState(false);
   const [token, setToken] = useState('');
   const [api, setApi] = useState(null);
   // const [disableLogin, setDisableLogin] = useState(true);
-  const [loginStatus, setLoginStatus] = useState(false);
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  // const [loginStatus, setLoginStatus] = useState(false);
+  // const [isFirstRender, setIsFirstRender] = useState(true);
   const router = useRouter();
 
   const discovery = {
@@ -30,7 +31,7 @@ const Index = () => {
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
   };
 
-  const clientPub = process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_ID;
+  const clientPub = "c4a1041477e94eacbefb38f58aed6b7d";
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -39,8 +40,12 @@ const Index = () => {
       // To follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
       // this must be set to false
       usePKCE: false,
-      redirectUri: AuthSession.makeRedirectUri({
-        scheme: 'myapp',
+      redirectUri: 
+      AuthSession.makeRedirectUri({
+        // native: 'myapp://(tabs)/home'
+        // path: 'https://google.ca',
+        // path: 'http://localhost:8081/home',
+        scheme: "myapp", // Custom scheme, optional
       }),
     },
     discovery
@@ -48,7 +53,12 @@ const Index = () => {
 
   useEffect(() => {
     if (response?.type === 'success') {
-      const { code } = response.params;
+      console.log('>>YES')
+      setApi(response.params);
+      router.push({ pathname: "/home", params: { username } });
+    } else if (response?.type === 'dismiss') {
+      console.log('>>NO')
+      console.log('Auth was dismissed')
     }
   }, [response]);
 
@@ -117,11 +127,17 @@ const Index = () => {
         <TouchableOpacity style={styles.button} onPress={() => (promptAsync())}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() =>(console.log(token))}>
-          <Text style={styles.buttonText}>Get Token</Text>
+        <TouchableOpacity style={styles.button} onPress={() =>(console.log(request))}>
+          <Text style={styles.buttonText}>Get Request</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() =>(console.log(response))}>
+          <Text style={styles.buttonText}>Get Response</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() =>(console.log(api))}>
-          <Text style={styles.buttonText}>Get Api</Text>
+          <Text style={styles.buttonText}>Get Login Code</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() =>(handleLogin())}>
+          <Text style={styles.buttonText}>Get Login Old</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
